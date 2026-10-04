@@ -108,7 +108,7 @@ textarea{min-height:200px;resize:vertical}
 <audio id="aud" preload="none"></audio>
 <script>
 (() => {
-const VERSION = 'v5';
+const VERSION = 'v6';
 const DEFICON = document.getElementById('fav').getAttribute('href');
 const CFG = {
   user: "reggie",
@@ -361,6 +361,28 @@ async function upload(dir, file) {
   LOCAL[path] = URL.createObjectURL(file);
   return path;
 }
+const AUDIO_RE = /\.(mp3|ogg|oga|wav|m4a|aac|flac|opus|weba)$/i, IMG_RE = /\.(jpe?g|png|webp|gif)$/i;
+const isAudio = f => f.type.startsWith('audio/') || AUDIO_RE.test(f.name);
+const isImage = f => f.type.startsWith('image/') || IMG_RE.test(f.name);
+const byName = (a, b) => a.name.localeCompare(b.name, undefined, { numeric: true });
+const cleanTitle = n => n.replace(/\.[^.]+$/, '').replace(/^\d{1,3}\s*[-._)]\s*/, '').trim() || n;
+const uploadMany = (dir, files, onProg) => serial(async () => {
+  const stamp = Date.now();
+  const paths = files.map((f, i) => `${dir}/${stamp}-${i}-${f.name.replace(/[^\w.\-]+/g, '_')}`);
+  const head = (await gh(`git/ref/heads/${A.branch}`)).object.sha;
+  const base = (await gh(`git/commits/${head}`)).tree.sha;
+  const tree = [];
+  for (let i = 0; i < files.length; i++) {
+    if (onProg) onProg(i + 1, files.length, files[i].name);
+    const b = await gh('git/blobs', { method: 'POST', body: JSON.stringify({ content: await fileB64(files[i]), encoding: 'base64' }) });
+    tree.push({ path: paths[i], mode: '100644', type: 'blob', sha: b.sha });
+  }
+  const t = await gh('git/trees', { method: 'POST', body: JSON.stringify({ base_tree: base, tree }) });
+  const c = await gh('git/commits', { method: 'POST', body: JSON.stringify({ message: 'upload ' + files.length + ' file(s)', tree: t.sha, parents: [head] }) });
+  await gh(`git/refs/heads/${A.branch}`, { method: 'PATCH', body: JSON.stringify({ sha: c.sha }) });
+  files.forEach((f, i) => { LOCAL[paths[i]] = URL.createObjectURL(f); });
+  return paths;
+});
 function guessRepo() {
   const h = location.hostname;
   if (!h.endsWith('.github.io')) return '';
@@ -388,9 +410,11 @@ function tabPosts() {
 function tabMusic() {
   const al = site.albums.map(a => `<div class="box">
 <div class="arow"><img class="thumb" src="${esc(U(a.cover) || PH)}" alt=""><div><b>${esc(a.title)}</b><br><small>${esc(a.artist || 'no artist')}</small></div></div>
-<div class="row">${btn('albrename', a.id, 'rename', 'mint')}${btn('albcover', a.id, 'change cover', 'lav')}${btn('albtracks', a.id, 'add tracks', 'mint')}${btn('albdel', a.id, 'delete album', 'pink')}</div>
+<div class="row">${btn('albrename', a.id, 'rename', 'mint')}${btn('albcover', a.id, 'change cover', 'lav')}${btn('albtracks', a.id, 'add tracks', 'mint')}${btn('addfolder', a.id, 'add folder', 'lav')}${btn('albdel', a.id, 'delete album', 'pink')}</div>
 <div style="margin-top:10px">${a.tracks.map((t, i) => `<div class="item"><span>${i + 1}. ${esc(t.title)}</span><span>${btn('trup', a.id, '▲', '', t.id)} ${btn('trdown', a.id, '▼', '', t.id)} ${btn('trrename', a.id, 'rename', 'mint', t.id)} ${btn('trdel', a.id, 'delete', 'pink', t.id)}</span></div>`).join('') || '<p class="hint">no tracks yet, press add tracks</p>'}</div></div>`).join('');
-  return `<div class="box"><h2>new album</h2><form data-form="album">
+  return `<div class="box"><h2>upload a folder</h2><p class="hint">pick a folder of songs. it becomes an album named after the folder, with every song added in order. if the folder has a picture (like cover.jpg) it's used as the cover. works in chrome, edge and firefox on a computer.</p>
+<div class="row"><button class="btn pink" data-act="folder">choose folder</button></div></div>
+<div class="box"><h2>new album</h2><form data-form="album">
 <label for="at">album name</label><input type="text" id="at" name="title" maxlength="120" required>
 <label for="aa">artist <small>(optional)</small></label><input type="text" id="aa" name="artist" maxlength="120">
 <label for="ac">cover image <small>(optional, you can add one later)</small></label><input type="file" id="ac" name="cover" accept="image/*">
@@ -443,9 +467,10 @@ async function enterDash() {
   catch (e) { flash('could not load from github: ' + e.message, true); }
   renderAdmin();
 }
+let extra = '';
 async function run(label, fn, okMsg) {
-  st(label);
-  try { await fn(); flash(okMsg || 'saved! it goes live in about a minute.'); }
+  st(label); extra = '';
+  try { await fn(); flash((okMsg || 'saved! it goes live in about a minute.') + extra); }
   catch (e) { flash('failed: ' + e.message, true); try { await saveSite('sync'); } catch (_) {} }
   renderAdmin();
 }
@@ -520,7 +545,9 @@ let PEND = null;
 const pick = $('#pick');
 function pickFor(type, id) {
   PEND = { type, id };
-  pick.accept = type === 'tracks' ? 'audio/*' : 'image/*';
+  const folder = type === 'folder' || type === 'addfolder';
+  pick.webkitdirectory = folder;
+  pick.accept = folder ? '' : type === 'tracks' ? 'audio/*' : 'image/*';
   pick.multiple = type === 'tracks' || type === 'photos';
   pick.click();
 }
@@ -531,16 +558,26 @@ pick.addEventListener('change', () => {
     if (p.type === 'cover') {
       const a = alb(p.id), old = a.cover; a.cover = await upload('covers', await prep(files[0]));
       await saveSite('album cover'); await delFile(old, 'remove old cover').catch(() => {});
-    } else if (p.type === 'tracks') {
-      const a = alb(p.id);
-      for (const f of files) {
-        if (f.size > 50 * 1024 * 1024) throw new Error(f.name + ' is over 50 MB');
-        st('uploading ' + f.name + '...');
-        a.tracks.push({ id: uid(), title: f.name.replace(/\.[^.]+$/, ''), file: await upload('music', f) });
-      }
-      await saveSite('add tracks'); stopMusic();
+    } else if (p.type === 'tracks' || p.type === 'addfolder' || p.type === 'folder') {
+      const audio = files.filter(isAudio).sort(byName);
+      if (!audio.length) throw new Error('no audio files found');
+      const ok = audio.filter(f => f.size <= 50 * 1024 * 1024);
+      if (ok.length < audio.length) extra += '\nskipped ' + (audio.length - ok.length) + ' file(s) over 50 MB';
+      if (!ok.length) throw new Error('all of those files are over 50 MB');
+      let a;
+      if (p.type === 'folder') {
+        const imgs = files.filter(isImage), cf = imgs.find(f => /cover|folder|front|album|art/i.test(f.name)) || imgs[0];
+        a = { id: uid(), title: (files[0].webkitRelativePath || '').split('/')[0] || 'new album', artist: '', cover: '', tracks: [] };
+        if (cf) { st('uploading cover...'); a.cover = (await uploadMany('covers', [await prep(cf)]))[0]; }
+        site.albums.push(a);
+      } else a = alb(p.id);
+      const paths = await uploadMany('music', ok, (i, n, name) => st('uploading ' + i + ' of ' + n + ': ' + name));
+      ok.forEach((f, i) => a.tracks.push({ id: uid(), title: cleanTitle(f.name), file: paths[i] }));
+      st('saving...'); await saveSite(p.type === 'folder' ? 'new album from folder' : 'add tracks'); stopMusic();
     } else if (p.type === 'photos') {
-      for (const f of files) { st('uploading ' + f.name + '...'); site.photos.push({ id: uid(), file: await upload('images', await prep(f)), caption: '' }); }
+      const imgs = []; for (const f of files) imgs.push(await prep(f));
+      const paths = await uploadMany('images', imgs, (i, n, name) => st('uploading ' + i + ' of ' + n + ': ' + name));
+      paths.forEach(path => site.photos.push({ id: uid(), file: path, caption: '' }));
       await saveSite('add photos');
     } else {
       const key = { hdr: 'headerImage', side: 'sideImage', fav: 'favicon' }[p.type], old = site.settings[key];
@@ -563,6 +600,8 @@ async function adminClick(b) {
   else if (act === 'delpost') { if (confirm('delete this post?')) run('deleting...', async () => { site.posts = site.posts.filter(p => p.id !== id); await saveSite('delete post'); }, 'post deleted'); }
   else if (act === 'albcover') pickFor('cover', id);
   else if (act === 'albtracks') pickFor('tracks', id);
+  else if (act === 'addfolder') pickFor('addfolder', id);
+  else if (act === 'folder') pickFor('folder');
   else if (act === 'phadd') pickFor('photos');
   else if (act === 'setimg') pickFor(id);
   else if (act === 'resetimg') run('saving...', async () => { const k = { hdr: 'headerImage', side: 'sideImage', fav: 'favicon' }[id], old = site.settings[k]; site.settings[k] = ''; await saveSite('reset image'); await delFile(old, 'remove old image').catch(() => {}); });
