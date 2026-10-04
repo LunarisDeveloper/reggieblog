@@ -139,6 +139,8 @@ const fileB64 = f => new Promise((res, rej) => { const r = new FileReader(); r.o
 const byDate = (a, b) => new Date(b.date) - new Date(a.date);
 const niceDate = iso => new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }).toLowerCase();
 const uid = () => Math.random().toString(36).slice(2, 10);
+const LOCAL = {};
+const U = p => LOCAL[p] || p;
 const PH = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#ffd1e6"/><circle cx="50" cy="50" r="38" fill="#5a2d4f"/><circle cx="50" cy="50" r="14" fill="#ff8fc0" stroke="#fff" stroke-width="3"/><circle cx="50" cy="50" r="3" fill="#5a2d4f"/><path d="M22 40 A30 30 0 0 1 40 22" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".6"/></svg>');
 
 function fmt(text) {
@@ -161,7 +163,7 @@ const BUNNY = w => `<svg class="mascot" viewBox="0 0 120 120" width="${w}" heigh
 <path d="M54 88 Q57 93 60 88 Q63 93 66 88" fill="none" stroke="#5a2d4f" stroke-width="3" stroke-linecap="round"/>
 <path d="M84 40 L98 32 L96 48 Z M84 40 L72 32 L74 48 Z" fill="#ff8fc0" stroke="#5a2d4f" stroke-width="3" stroke-linejoin="round" transform="translate(6 2) scale(.9)"/>
 <circle cx="90" cy="40" r="4" fill="#ffd1e6" stroke="#5a2d4f" stroke-width="3"/></svg>`;
-const mascot = (key, w) => { const u = site.settings[key]; return u ? `<img class="mascot" src="${esc(u)}" alt="" style="height:${w}px">` : BUNNY(w); };
+const mascot = (key, w) => { const u = site.settings[key]; return u ? `<img class="mascot" src="${esc(U(u))}" alt="" style="height:${w}px">` : BUNNY(w); };
 
 let site = norm(DEFAULT);
 const alb = id => site.albums.find(a => a.id === id);
@@ -206,7 +208,7 @@ function renderPost(id) {
 }
 function renderMusic() {
   document.title = site.settings.musicTitle + ' - ' + site.settings.title;
-  const g = site.albums.map(a => `<a class="alb" href="#/music/${esc(a.id)}"><img src="${esc(a.cover || PH)}" alt=""><b>${esc(a.title)}</b><small>${esc(a.artist || '')}${a.artist ? ' - ' : ''}${a.tracks.length} track${a.tracks.length === 1 ? '' : 's'}</small></a>`).join('');
+  const g = site.albums.map(a => `<a class="alb" href="#/music/${esc(a.id)}"><img src="${esc(U(a.cover) || PH)}" alt=""><b>${esc(a.title)}</b><small>${esc(a.artist || '')}${a.artist ? ' - ' : ''}${a.tracks.length} track${a.tracks.length === 1 ? '' : 's'}</small></a>`).join('');
   mount(shell(`<div class="box" style="padding-top:26px"><h2 class="ttl">${esc(site.settings.musicTitle)}</h2>${g ? `<div class="grid">${g}</div>` : '<p>no albums yet!</p>'}</div>`));
 }
 function renderAlbum(id) {
@@ -214,19 +216,19 @@ function renderAlbum(id) {
   if (!a) return mount(shell('<div class="box center"><h2>oops!</h2><p>that album got lost.</p><a class="btn" href="#/music">back to music</a></div>'));
   document.title = a.title + ' - ' + site.settings.title;
   const tl = a.tracks.map((t, i) => `<li><button class="tbtn" data-play="${a.id}|${i}">${esc(t.title)}</button></li>`).join('');
-  mount(shell(`<div class="box"><div class="albhead"><img src="${esc(a.cover || PH)}" alt="">
+  mount(shell(`<div class="box"><div class="albhead"><img src="${esc(U(a.cover) || PH)}" alt="">
 <div><h2 style="margin-bottom:4px">${esc(a.title)}</h2><div>${esc(a.artist || '')}</div>
 <div class="row">${a.tracks.length ? `<button class="btn pink" data-play="${a.id}|0">play all</button>` : ''}<a class="btn" href="#/music">all albums</a></div></div></div>
 ${tl ? `<ol class="tl">${tl}</ol>` : '<p>no tracks yet!</p>'}</div>`));
 }
 function renderPhotos() {
   document.title = site.settings.photosTitle + ' - ' + site.settings.title;
-  const g = photoList().map((p, i) => `<figure style="margin:0"><button class="pic" data-lb="${i}" aria-label="open photo"><img src="${esc(p.file)}" alt="${esc(p.caption)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:15px;display:block"></button>${p.caption ? `<figcaption class="center"><small>${esc(p.caption)}</small></figcaption>` : ''}</figure>`).join('');
+  const g = photoList().map((p, i) => `<figure style="margin:0"><button class="pic" data-lb="${i}" aria-label="open photo"><img src="${esc(U(p.file))}" alt="${esc(p.caption)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:15px;display:block"></button>${p.caption ? `<figcaption class="center"><small>${esc(p.caption)}</small></figcaption>` : ''}</figure>`).join('');
   mount(shell(`<div class="box" style="padding-top:26px"><h2 class="ttl">${esc(site.settings.photosTitle)}</h2>${g ? `<div class="grid">${g}</div>` : '<p>no photos yet!</p>'}</div>`));
 }
 function openLb(i) {
   const p = photoList()[i]; if (!p) return;
-  $('#lbi').src = p.file; $('#lbi').alt = p.caption || ''; $('#lbc').textContent = p.caption || ''; $('#lb').hidden = false;
+  $('#lbi').src = U(p.file); $('#lbi').alt = p.caption || ''; $('#lbc').textContent = p.caption || ''; $('#lb').hidden = false;
 }
 
 /* ---------- player ---------- */
@@ -241,7 +243,7 @@ function refreshPlayer() {
   if (t) {
     $('#pbar').hidden = false; document.body.classList.add('hasbar');
     $('#ptitle').textContent = t.title; $('#palb').textContent = Q.a.title + (Q.a.artist ? ' - ' + Q.a.artist : '');
-    $('#pcov').src = Q.a.cover || PH;
+    $('#pcov').src = U(Q.a.cover) || PH;
   }
   $('#pplay').textContent = aud.paused ? '▶' : '⏸';
   document.querySelectorAll('.tbtn').forEach(b => { const [id, i] = b.dataset.play.split('|'); b.classList.toggle('on', !!Q.a && Q.a.id === id && +i === Q.i); });
@@ -279,6 +281,7 @@ async function decrypt(key, b64) {
 const A = { state: 'login', tab: 'posts', key: null, token: '', repo: '', branch: 'main', editing: null, msg: null };
 async function gh(path, opts = {}) {
   const r = await fetch(`https://api.github.com/repos/${A.repo}${path ? '/' + path : ''}`, {
+    cache: 'no-store',
     ...opts,
     headers: { Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + A.token, ...(opts.body ? { 'Content-Type': 'application/json' } : {}) }
   });
@@ -300,8 +303,11 @@ async function loadSite() {
   if (f) site = norm(JSON.parse(unb64s(f.content)));
 }
 async function saveSite(msg) {
-  const f = await getFile('data/site.json');
-  await putFile('data/site.json', b64s(JSON.stringify(site, null, 2)), msg, f && f.sha);
+  for (let n = 0; ; n++) {
+    const f = await getFile('data/site.json');
+    try { return await putFile('data/site.json', b64s(JSON.stringify(site, null, 2)), msg, f && f.sha); }
+    catch (e) { if (n >= 2 || !/does not match|sha/i.test(e.message)) throw e; await new Promise(r => setTimeout(r, 800)); }
+  }
 }
 async function prep(file) {
   if (!/^image\/(png|jpe?g|webp)$/.test(file.type)) return file;
@@ -319,6 +325,7 @@ async function prep(file) {
 async function upload(dir, file) {
   const path = `${dir}/${Date.now()}-${uid().slice(0, 3)}-${file.name.replace(/[^\w.\-]+/g, '_')}`;
   await putFile(path, await fileB64(file), 'upload ' + file.name);
+  LOCAL[path] = URL.createObjectURL(file);
   return path;
 }
 function guessRepo() {
@@ -347,7 +354,7 @@ function tabPosts() {
 }
 function tabMusic() {
   const al = site.albums.map(a => `<div class="box">
-<div class="arow"><img class="thumb" src="${esc(a.cover || PH)}" alt=""><div><b>${esc(a.title)}</b><br><small>${esc(a.artist || 'no artist')}</small></div></div>
+<div class="arow"><img class="thumb" src="${esc(U(a.cover) || PH)}" alt=""><div><b>${esc(a.title)}</b><br><small>${esc(a.artist || 'no artist')}</small></div></div>
 <div class="row">${btn('albrename', a.id, 'rename', 'mint')}${btn('albcover', a.id, 'change cover', 'lav')}${btn('albtracks', a.id, 'add tracks', 'mint')}${btn('albdel', a.id, 'delete album', 'pink')}</div>
 <div style="margin-top:10px">${a.tracks.map((t, i) => `<div class="item"><span>${i + 1}. ${esc(t.title)}</span><span>${btn('trup', a.id, '▲', '', t.id)} ${btn('trdown', a.id, '▼', '', t.id)} ${btn('trrename', a.id, 'rename', 'mint', t.id)} ${btn('trdel', a.id, 'delete', 'pink', t.id)}</span></div>`).join('') || '<p class="hint">no tracks yet, press add tracks</p>'}</div></div>`).join('');
   return `<div class="box"><h2>new album</h2><form data-form="album">
@@ -357,7 +364,7 @@ function tabMusic() {
 <div class="row"><button class="btn pink" type="submit">create album</button></div></form></div>${al}`;
 }
 function tabPhotos() {
-  const g = photoList().map(p => `<div class="center"><img class="pic" style="cursor:default" src="${esc(p.file)}" alt="${esc(p.caption)}" loading="lazy"><small>${esc(p.caption || 'no caption')}</small><div class="row" style="justify-content:center;margin-top:6px">${btn('phcap', p.id, 'caption', 'mint')}${btn('phdel', p.id, 'delete', 'pink')}</div></div>`).join('');
+  const g = photoList().map(p => `<div class="center"><img class="pic" style="cursor:default" src="${esc(U(p.file))}" alt="${esc(p.caption)}" loading="lazy"><small>${esc(p.caption || 'no caption')}</small><div class="row" style="justify-content:center;margin-top:6px">${btn('phcap', p.id, 'caption', 'mint')}${btn('phdel', p.id, 'delete', 'pink')}</div></div>`).join('');
   return `<div class="box"><h2>photos</h2><p class="hint">every photo you upload here shows up on the photos page. big photos are shrunk automatically.</p>
 <div class="row"><button class="btn pink" data-act="phadd">upload photos</button></div></div>
 ${g ? `<div class="box"><div class="grid">${g}</div></div>` : ''}`;
@@ -366,7 +373,7 @@ function tabSettings() {
   const s = site.settings;
   const tf = (k, l) => `<label for="s_${k}">${l}</label><input type="text" id="s_${k}" name="${k}" value="${esc(s[k])}">`;
   const cf = (k, l) => `<div><label for="s_${k}">${l}</label><input type="color" id="s_${k}" name="${k}" value="${esc(s[k])}"></div>`;
-  const img = (key, id, label, w) => `<div class="arow" style="margin-top:10px">${s[key] ? `<img class="thumb wide" src="${esc(s[key])}" alt="">` : `<span style="width:64px;display:block">${BUNNY(56)}</span>`}<div><b>${label}</b><div class="row" style="margin-top:6px">${btn('setimg', id, 'upload new', 'pink')}${s[key] ? btn('resetimg', id, 'back to bunny', '') : ''}</div></div></div>`;
+  const img = (key, id, label, w) => `<div class="arow" style="margin-top:10px">${s[key] ? `<img class="thumb wide" src="${esc(U(s[key]))}" alt="">` : `<span style="width:64px;display:block">${BUNNY(56)}</span>`}<div><b>${label}</b><div class="row" style="margin-top:6px">${btn('setimg', id, 'upload new', 'pink')}${s[key] ? btn('resetimg', id, 'back to bunny', '') : ''}</div></div></div>`;
   return `<div class="box"><h2>images</h2>${img('headerImage', 'hdr', 'top banner picture')}${img('sideImage', 'side', 'about box picture')}</div>
 <div class="box"><h2>text and colors</h2><form data-form="settings">
 ${tf('title', 'site name')}${tf('tagline', 'tagline under the name')}${tf('aboutTitle', 'about box heading')}
