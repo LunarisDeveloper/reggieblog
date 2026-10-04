@@ -75,7 +75,7 @@ input[type=file]{font:inherit;max-width:100%}
 input[type=color]{width:64px;height:38px;border:3px solid var(--ink);border-radius:10px;padding:2px;background:#fff;cursor:pointer}
 textarea{min-height:200px;resize:vertical}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
-.msg{background:var(--mint);border:3px solid var(--ink);border-radius:14px;padding:6px 14px;margin-bottom:14px;overflow-wrap:anywhere}
+.msg{white-space:pre-wrap;background:var(--mint);border:3px solid var(--ink);border-radius:14px;padding:6px 14px;margin-bottom:14px;overflow-wrap:anywhere}
 .msg[hidden]{display:none}
 .msg.err{background:#ffc9c9}
 .item{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;border-top:2px dashed var(--pink);padding:8px 0}
@@ -107,6 +107,7 @@ textarea{min-height:200px;resize:vertical}
 <audio id="aud" preload="none"></audio>
 <script>
 (() => {
+const VERSION = 'v4';
 const CFG = {
   user: "reggie",
   // password is never stored; only this salted PBKDF2-SHA256 hash
@@ -250,6 +251,7 @@ function refreshPlayer() {
 }
 aud.addEventListener('play', refreshPlayer);
 aud.addEventListener('pause', refreshPlayer);
+aud.addEventListener('error', () => { if (aud.getAttribute('src')) $('#palb').textContent = 'could not load this file (it may still be publishing, try again in a minute)'; });
 aud.addEventListener('ended', () => { if (Q.a && Q.i < Q.a.tracks.length - 1) playAlbum(Q.a.id, Q.i + 1); });
 aud.addEventListener('timeupdate', () => { if (aud.duration) $('#seek').value = aud.currentTime / aud.duration * 100; });
 $('#seek').addEventListener('input', e => { if (aud.duration) aud.currentTime = e.target.value / 100 * aud.duration; });
@@ -292,22 +294,50 @@ async function getFile(p) {
   try { return await gh(`contents/${p}?ref=${A.branch}`); }
   catch (e) { if (/not found/i.test(e.message)) return null; throw e; }
 }
-const putFile = (p, b64, msg, sha) => gh(`contents/${p}`, { method: 'PUT', body: JSON.stringify({ message: msg, content: b64, branch: A.branch, ...(sha ? { sha } : {}) }) });
+let chain = Promise.resolve(), lastSha = null;
+const serial = fn => { const p = chain.then(fn); chain = p.catch(() => {}); return p; };
+const _put = (p, b64, msg, sha) => gh(`contents/${p}`, { method: 'PUT', body: JSON.stringify({ message: msg, content: b64, branch: A.branch, ...(sha ? { sha } : {}) }) });
+const putFile = (p, b64, msg, sha) => serial(() => _put(p, b64, msg, sha));
 async function delFile(p, msg) {
   if (!p || /^https?:/.test(p)) return;
-  const f = await getFile(p);
-  if (f) await gh(`contents/${p}`, { method: 'DELETE', body: JSON.stringify({ message: msg, sha: f.sha, branch: A.branch }) });
+  return serial(async () => {
+    const f = await getFile(p);
+    if (f) await gh(`contents/${p}`, { method: 'DELETE', body: JSON.stringify({ message: msg, sha: f.sha, branch: A.branch }) });
+  });
 }
 async function loadSite() {
   const f = await getFile('data/site.json');
   if (f) site = norm(JSON.parse(unb64s(f.content)));
 }
-async function saveSite(msg) {
+const saveSite = msg => serial(async () => {
+  let f = await getFile('data/site.json'), sha = f && f.sha;
   for (let n = 0; ; n++) {
-    const f = await getFile('data/site.json');
-    try { return await putFile('data/site.json', b64s(JSON.stringify(site, null, 2)), msg, f && f.sha); }
-    catch (e) { if (n >= 2 || !/does not match|sha/i.test(e.message)) throw e; await new Promise(r => setTimeout(r, 800)); }
+    try {
+      const r = await _put('data/site.json', b64s(JSON.stringify(site, null, 2)), msg, sha);
+      lastSha = r && r.content && r.content.sha; return r;
+    } catch (e) {
+      if (n >= 4 || !/does not match|sha|conflict/i.test(e.message)) throw e;
+      await new Promise(r => setTimeout(r, 1200));
+      f = await getFile('data/site.json');
+      sha = (lastSha && f && f.sha !== lastSha && n % 2 === 0) ? lastSha : (f && f.sha);
+    }
   }
+});
+async function checkFiles() {
+  const paths = [...site.albums.flatMap(a => [a.cover, ...a.tracks.map(t => t.file)]), ...site.photos.map(p => p.file), site.settings.headerImage, site.settings.sideImage].filter(p => p && !/^https?:/.test(p));
+  if (!paths.length) { flash('no uploaded files to check yet.'); return renderAdmin(); }
+  const out = [];
+  for (const p of paths) {
+    st('checking ' + p + '...');
+    let live = false;
+    try { live = (await fetch(p, { method: 'HEAD', cache: 'no-store' })).ok; } catch (e) {}
+    if (live) continue;
+    let inRepo = false;
+    try { inRepo = !!(await getFile(p)); } catch (e) {}
+    out.push(inRepo ? 'still publishing (in repo, not live yet): ' + p : 'MISSING from repo: ' + p);
+  }
+  flash(out.length ? out.join('\n') : 'all ' + paths.length + ' files are live!', !!out.length);
+  renderAdmin();
 }
 async function prep(file) {
   if (!/^image\/(png|jpe?g|webp)$/.test(file.type)) return file;
@@ -381,7 +411,7 @@ ${tf('title', 'site name')}${tf('tagline', 'tagline under the name')}${tf('about
 ${tf('recentTitle', 'recent posts heading')}${tf('musicTitle', 'music page name')}${tf('photosTitle', 'photos page name')}${tf('footer', 'footer line 1')}${tf('footer2', 'footer line 2')}
 <div class="colors">${cf('bg', 'background')}${cf('accent', 'accent')}${cf('card', 'boxes')}${cf('ink', 'text and outlines')}</div>
 <div class="row"><button class="btn pink" type="submit">save</button><button class="btn" type="button" data-act="resetcolors">reset colors</button></div></form></div>
-<div class="box"><h2>github connection</h2><p class="hint">connected to ${esc(A.repo)}.</p><div class="row">${btn('reset', 'x', 'change github token', 'lav')}</div></div>`;
+<div class="box"><h2>github connection</h2><p class="hint">connected to ${esc(A.repo)}.</p><div class="row">${btn('reset', 'x', 'change github token', 'lav')}${btn('check', 'x', 'check my files', 'mint')}</div><p class="hint">page version ${VERSION}</p></div>`;
 }
 function adminHtml() {
   if (A.state === 'login') return `<div class="box login"><h2>admin login</h2>${msgBox()}
@@ -525,6 +555,7 @@ async function adminClick(b) {
   else if (act === 'edit') { A.editing = id; renderAdmin(); scrollTo(0, 0); }
   else if (act === 'cancel') { A.editing = null; renderAdmin(); }
   else if (act === 'logout') { A.state = 'login'; A.key = null; A.token = ''; renderAdmin(); }
+  else if (act === 'check') checkFiles();
   else if (act === 'reset') { localStorage.removeItem('blog_ct'); A.state = 'setup'; renderAdmin(); }
   else if (act === 'delpost') { if (confirm('delete this post?')) run('deleting...', async () => { site.posts = site.posts.filter(p => p.id !== id); await saveSite('delete post'); }, 'post deleted'); }
   else if (act === 'albcover') pickFor('cover', id);
