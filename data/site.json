@@ -281,7 +281,38 @@
       "title": "REACTOR",
       "artist": "femtanyl",
       "cover": "covers/1791154716260-n33-artworks-37d6d1e1-4566-4bc5-be37-5f20963c95f8-0-t500x500.jpg",
-      "tracks": []
+      "tracks": [
+        {
+          "id": "ajhdmhen",
+          "title": "IT'S TIME",
+          "file": "music/1791154737825-0-01_-_IT_S_TIME.flac"
+        },
+        {
+          "id": "eaw2axg9",
+          "title": "WEIGHTLESS!",
+          "file": "music/1791154737825-1-02_-_WEIGHTLESS_.flac"
+        },
+        {
+          "id": "q1bzas7t",
+          "title": "DINNER!",
+          "file": "music/1791154737825-2-03_-_DINNER_.flac"
+        },
+        {
+          "id": "y2523gzb",
+          "title": "M3 N MIN3",
+          "file": "music/1791154737825-3-04_-_M3_N_MIN3.flac"
+        },
+        {
+          "id": "cabqaybr",
+          "title": "ATTACKING VERTICAL",
+          "file": "music/1791154737825-4-05_-_ATTACKING_VERTICAL.flac"
+        },
+        {
+          "id": "g8rix9ya",
+          "title": "AND I'M GONE",
+          "file": "music/1791154737825-5-06_-_AND_I_M_GONE.flac"
+        }
+      ]
     }
   ],
   "photos": [
