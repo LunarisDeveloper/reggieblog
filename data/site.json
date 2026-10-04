@@ -1,7 +1,7 @@
 {
   "about": "hi, im reggie, this is my blog where i post stuff that i like, such as music, photos, ect ! my faviorite artist's are Kanye, femtanyl, and Frank Ocean.\n\ngoes as she/her, and im trans lol",
   "settings": {
-    "title": "reggie's little blog",
+    "title": "reggie's blog!",
     "tagline": "regieee :3",
     "aboutTitle": "about me",
     "recentTitle": "recent posts",
@@ -14,7 +14,8 @@
     "card": "#fbe5f0",
     "ink": "#80286a",
     "headerImage": "branding/1791133991103-e35-Untitled.png",
-    "sideImage": "branding/1791134045381-o80-ba9698dec41a8e1a4b47be0a821972b6.jpg"
+    "sideImage": "branding/1791134045381-o80-ba9698dec41a8e1a4b47be0a821972b6.jpg",
+    "favicon": ""
   },
   "posts": [
     {
