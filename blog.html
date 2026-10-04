@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>my little blog</title>
+<style>
+:root{--bg:#ffe3f0;--pink:#ff8fc0;--cream:#fff7fb;--ink:#5a2d4f;--pink2:color-mix(in srgb,var(--pink) 35%,#fff);--lav:#dccfff;--sky:#cfeeff;--butter:#fff1b0;--mint:#c9f5df}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font-family:"Chalkboard SE","Comic Neue","Comic Sans MS","Segoe Print",cursive,sans-serif;font-size:17px;line-height:1.5;
+background-color:var(--bg);background-image:radial-gradient(#fff 3px,transparent 3.5px),radial-gradient(color-mix(in srgb,var(--bg),var(--pink) 30%) 3px,transparent 3.5px);
+background-size:44px 44px;background-position:0 0,22px 22px}
+body.hasbar{padding-bottom:90px}
+a{color:color-mix(in srgb,var(--pink) 60%,#a0125f);text-decoration-thickness:2px;text-underline-offset:3px}
+a:hover{color:#8a3dff}
+:focus-visible{outline:3px dashed #8a3dff;outline-offset:3px}
+.wrap{max-width:940px;margin:0 auto;padding:18px 14px 40px}
+.box{background:var(--cream);border:3px solid var(--ink);border-radius:24px 28px 22px 30px/28px 22px 30px 24px;box-shadow:6px 6px 0 var(--ink);padding:16px 20px}
+header.top{display:flex;align-items:center;gap:18px;background:var(--pink2);padding:12px 24px;position:relative;overflow:hidden}
+header.top:after{content:"✦  ♡  ✧  ♡  ✦  ♡  ✧";position:absolute;right:16px;top:8px;letter-spacing:.4em;font-size:.85rem;color:var(--pink);white-space:nowrap}
+header.top h1{margin:0;font-size:clamp(1.6rem,5vw,2.6rem);line-height:1.1;text-shadow:3px 3px 0 #fff}
+header.top p{margin:.2rem 0 0;font-size:1rem}
+.mascot{flex:none;transform:rotate(-4deg)}
+img.mascot{object-fit:contain;width:auto;max-width:160px}
+nav{display:flex;gap:10px;flex-wrap:wrap;margin:18px 4px}
+nav a,.btn{display:inline-block;background:var(--butter);color:var(--ink);text-decoration:none;font:inherit;font-weight:700;cursor:pointer;
+border:3px solid var(--ink);border-radius:999px;padding:4px 18px;box-shadow:3px 3px 0 var(--ink);transition:transform .08s}
+nav a:nth-child(2n){background:var(--sky)}
+nav a:hover,.btn:hover{transform:translate(-1px,-1px);color:var(--ink)}
+nav a:active,.btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+.btn.pink{background:var(--pink)}.btn.mint{background:var(--mint)}.btn.lav{background:var(--lav)}.btn.small{padding:1px 12px;font-size:.9rem}
+.cols{display:grid;grid-template-columns:1fr 250px;gap:22px;align-items:start}
+.posts{display:grid;gap:22px}
+.post{margin-top:16px;padding-top:22px}
+.post h2,.ttl{margin:-34px 0 8px;display:inline-block;background:var(--lav);border:3px solid var(--ink);border-radius:14px;padding:2px 14px;font-size:1.3rem;box-shadow:3px 3px 0 var(--ink);transform:rotate(-1deg)}
+.post h2 a{color:var(--ink);text-decoration:none}
+.date{font-size:.9rem;opacity:.75;margin:0 0 8px}
+.post p{margin:.6em 0;overflow-wrap:anywhere}
+aside .box{margin-bottom:22px}
+h3{margin:0 0 8px;font-size:1.1rem;background:var(--sky);display:inline-block;padding:0 12px;border:2px solid var(--ink);border-radius:999px}
+h2{margin-top:0}
+aside ul{margin:0;padding-left:1.1rem}
+.center{text-align:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:20px}
+.alb{display:block;text-decoration:none;color:var(--ink);text-align:center}
+.alb img,.pic{width:100%;aspect-ratio:1;object-fit:cover;border:3px solid var(--ink);border-radius:18px;box-shadow:4px 4px 0 var(--ink);background:var(--pink2);display:block}
+.alb b{display:block;margin-top:10px;overflow-wrap:anywhere}
+.alb small,small{opacity:.8}
+.alb:hover img{transform:rotate(-2deg)}
+.pic{cursor:zoom-in;padding:0;font:inherit}
+.albhead{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.albhead img{width:170px;height:170px;object-fit:cover;border:3px solid var(--ink);border-radius:18px;box-shadow:4px 4px 0 var(--ink)}
+.tl{margin:14px 0 0;padding-left:1.6rem}
+.tl li{margin:2px 0}
+.tbtn{all:unset;cursor:pointer;padding:2px 10px;border-radius:10px;overflow-wrap:anywhere;display:inline-block}
+.tbtn:hover{background:var(--pink2)}.tbtn.on{background:var(--butter);font-weight:700}
+.tbtn:focus-visible{outline:3px dashed #8a3dff}
+.pbar{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;align-items:center;gap:10px;background:var(--cream);border-top:3px solid var(--ink);padding:8px 14px calc(8px + env(safe-area-inset-bottom,0px))}
+.pbar[hidden]{display:none}
+.pbar img{width:46px;height:46px;object-fit:cover;border:3px solid var(--ink);border-radius:10px;flex:none}
+.pinfo{flex:1;min-width:0;line-height:1.2}
+.pinfo b,.pinfo small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pbar input[type=range]{width:min(220px,28vw)}
+input[type=range]{accent-color:var(--pink)}
+#lb{position:fixed;inset:0;z-index:9;background:rgba(60,25,50,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;cursor:zoom-out}
+#lb[hidden]{display:none}
+#lb img{max-width:92vw;max-height:80vh;border:4px solid #fff;border-radius:14px}
+#lb p{color:#fff;margin:0}
+footer{text-align:center;margin-top:30px;font-size:.9rem}
+footer small{display:block;margin-top:6px}
+label{display:block;font-weight:700;margin:12px 0 4px}
+label small{font-weight:400}
+input[type=text],input[type=password],textarea{width:100%;font:inherit;color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:14px;padding:8px 12px}
+input[type=file]{font:inherit;max-width:100%}
+input[type=color]{width:64px;height:38px;border:3px solid var(--ink);border-radius:10px;padding:2px;background:#fff;cursor:pointer}
+textarea{min-height:200px;resize:vertical}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.msg{background:var(--mint);border:3px solid var(--ink);border-radius:14px;padding:6px 14px;margin-bottom:14px;overflow-wrap:anywhere}
+.msg[hidden]{display:none}
+.msg.err{background:#ffc9c9}
+.item{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;border-top:2px dashed var(--pink);padding:8px 0}
+.item:first-of-type{border-top:0}
+.stack>.box{margin-bottom:22px}
+.login{max-width:430px;margin:30px auto}
+.hint{font-size:.9rem;opacity:.8}
+.arow{display:flex;gap:14px;align-items:center}
+.thumb{width:64px;height:64px;object-fit:cover;border:3px solid var(--ink);border-radius:12px;flex:none;background:var(--pink2)}
+.thumb.wide{width:auto;max-width:150px;object-fit:contain;background:none;border:0}
+.colors{display:flex;gap:18px;flex-wrap:wrap}
+@media (max-width:720px){.cols{grid-template-columns:1fr}header.top:after{display:none}.pbar input[type=range]{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div class="pbar" id="pbar" hidden>
+  <img id="pcov" alt="">
+  <div class="pinfo"><b id="ptitle"></b><small id="palb"></small></div>
+  <button class="btn small" data-a="prev" aria-label="previous track">⏮</button>
+  <button class="btn small pink" data-a="play" id="pplay" aria-label="play or pause">▶</button>
+  <button class="btn small" data-a="next" aria-label="next track">⏭</button>
+  <input type="range" id="seek" min="0" max="100" value="0" aria-label="seek">
+  <button class="btn small" data-a="close" aria-label="close player">✕</button>
+</div>
+<div id="lb" hidden><img id="lbi" alt=""><p id="lbc"></p></div>
+<input type="file" id="pick" hidden>
+<audio id="aud" preload="none"></audio>
+<script>
+(() => {
+const CFG = {
+  user: "reggie",
+  // password is never stored; only this salted PBKDF2-SHA256 hash
+  salt: "7643f73972b9e99eaf47d960652e5005",
+  hash: "ba5a7b0e88e968f37f110c00ae37b13866506f595cd808302382eb5bbef59296",
+  saltK: "d22d63a24dcb8f64efd4e76d24e74f66",
+  iter: 200000
+};
+const DS = {
+  title: "reggie's little blog", tagline: "a diary on the internet, est. 2026",
+  aboutTitle: "about me", recentTitle: "recent posts", musicTitle: "my music", photosTitle: "my photos",
+  footer: "made with ♡ and way too many sparkles", footer2: "best viewed with a cup of tea",
+  bg: "#ffe3f0", accent: "#ff8fc0", card: "#fff7fb", ink: "#5a2d4f", headerImage: "", sideImage: ""
+};
+const DEFAULT = {
+  about: "hi hi! i'm reggie. this is my little corner of the internet. i post whatever i feel like, whenever i feel like it.",
+  settings: { ...DS }, albums: [], photos: [],
+  posts: [{ id: "welcome", title: "welcome to my blog!!", date: new Date().toISOString(),
+    body: "yay you found it! this is my new blog. i'll write about stuff i'm making, stuff i like, and random thoughts.\n\nthanks for stopping by, come back soon :)" }]
+};
+const norm = j => ({ about: j.about ?? DEFAULT.about, settings: { ...DS, ...(j.settings || {}) }, posts: j.posts || [], albums: j.albums || [], photos: j.photos || [] });
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const hex2buf = h => Uint8Array.from(h.match(/../g).map(x => parseInt(x, 16)));
+const buf2hex = b => [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
+const b64s = s => { let x = ''; new TextEncoder().encode(s).forEach(c => x += String.fromCharCode(c)); return btoa(x); };
+const unb64s = b => new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g, '')), c => c.charCodeAt(0)));
+const fileB64 = f => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(f); });
+const byDate = (a, b) => new Date(b.date) - new Date(a.date);
+const niceDate = iso => new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }).toLowerCase();
+const uid = () => Math.random().toString(36).slice(2, 10);
+const PH = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#ffd1e6"/><circle cx="50" cy="50" r="38" fill="#5a2d4f"/><circle cx="50" cy="50" r="14" fill="#ff8fc0" stroke="#fff" stroke-width="3"/><circle cx="50" cy="50" r="3" fill="#5a2d4f"/><path d="M22 40 A30 30 0 0 1 40 22" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".6"/></svg>');
+
+function fmt(text) {
+  let t = esc(text);
+  t = t.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\*(.+?)\*/g, '<i>$1</i>');
+  t = t.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" rel="noopener">$1</a>');
+  return t.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean).map(p => '<p>' + p.replace(/\n/g, '<br>') + '</p>').join('');
+}
+
+const BUNNY = w => `<svg class="mascot" viewBox="0 0 120 120" width="${w}" height="${w}" aria-hidden="true">
+<ellipse cx="60" cy="113" rx="32" ry="5" fill="#5a2d4f" opacity=".15"/>
+<ellipse cx="38" cy="24" rx="10" ry="22" transform="rotate(-10 38 24)" fill="#fff" stroke="#5a2d4f" stroke-width="4"/>
+<ellipse cx="38" cy="26" rx="4.5" ry="13" transform="rotate(-10 38 26)" fill="#ffb3d3"/>
+<ellipse cx="82" cy="24" rx="10" ry="22" transform="rotate(10 82 24)" fill="#fff" stroke="#5a2d4f" stroke-width="4"/>
+<ellipse cx="82" cy="26" rx="4.5" ry="13" transform="rotate(10 82 26)" fill="#ffb3d3"/>
+<ellipse cx="60" cy="74" rx="48" ry="38" fill="#fff" stroke="#5a2d4f" stroke-width="4"/>
+<ellipse cx="40" cy="76" rx="7" ry="9.5" fill="#5a2d4f"/><circle cx="37.5" cy="72" r="3" fill="#fff"/><circle cx="43" cy="80" r="1.5" fill="#fff"/>
+<ellipse cx="80" cy="76" rx="7" ry="9.5" fill="#5a2d4f"/><circle cx="77.5" cy="72" r="3" fill="#fff"/><circle cx="83" cy="80" r="1.5" fill="#fff"/>
+<ellipse cx="26" cy="88" rx="8" ry="5" fill="#ff9ec8" opacity=".75"/><ellipse cx="94" cy="88" rx="8" ry="5" fill="#ff9ec8" opacity=".75"/>
+<path d="M54 88 Q57 93 60 88 Q63 93 66 88" fill="none" stroke="#5a2d4f" stroke-width="3" stroke-linecap="round"/>
+<path d="M84 40 L98 32 L96 48 Z M84 40 L72 32 L74 48 Z" fill="#ff8fc0" stroke="#5a2d4f" stroke-width="3" stroke-linejoin="round" transform="translate(6 2) scale(.9)"/>
+<circle cx="90" cy="40" r="4" fill="#ffd1e6" stroke="#5a2d4f" stroke-width="3"/></svg>`;
+const mascot = (key, w) => { const u = site.settings[key]; return u ? `<img class="mascot" src="${esc(u)}" alt="" style="height:${w}px">` : BUNNY(w); };
+
+let site = norm(DEFAULT);
+const alb = id => site.albums.find(a => a.id === id);
+const photoList = () => [...site.photos].reverse();
+const aud = $('#aud');
+let Q = { a: null, i: -1 };
+
+/* ---------- layout ---------- */
+function applyTheme() {
+  const s = site.settings, r = document.documentElement.style;
+  r.setProperty('--bg', s.bg); r.setProperty('--pink', s.accent); r.setProperty('--cream', s.card); r.setProperty('--ink', s.ink);
+}
+function shell(main, side, tag) {
+  const s = site.settings;
+  return `<header class="top box">${mascot('headerImage', 96)}<div><h1>${esc(s.title)}</h1><p>${esc(tag || s.tagline)}</p></div></header>
+<nav><a href="#/">home</a><a href="#/music">music</a><a href="#/photos">photos</a><a href="#/admin">admin</a></nav>
+${side ? `<div class="cols"><main>${main}</main><aside>${side}</aside></div>` : main}
+<footer>${esc(s.footer)}<small>${esc(s.footer2)}</small></footer>`;
+}
+function mount(html) { applyTheme(); $('#app').innerHTML = html; refreshPlayer(); }
+
+function sidebar() {
+  const s = site.settings;
+  const recent = [...site.posts].sort(byDate).slice(0, 6).map(p => `<li><a href="#/post/${esc(p.id)}">${esc(p.title)}</a></li>`).join('') || '<li>nothing yet</li>';
+  const albs = site.albums.slice(0, 6).map(a => `<li><a href="#/music/${esc(a.id)}">${esc(a.title)}</a></li>`).join('');
+  return `<div class="box center">${mascot('sideImage', 80)}<br><h3>${esc(s.aboutTitle)}</h3><div style="text-align:left">${fmt(site.about)}</div></div>
+<div class="box"><h3>${esc(s.recentTitle)}</h3><ul>${recent}</ul></div>
+${albs ? `<div class="box"><h3>${esc(s.musicTitle)}</h3><ul>${albs}</ul></div>` : ''}`;
+}
+const postHtml = (p, link) => `<article class="box post"><h2>${link ? `<a href="#/post/${esc(p.id)}">${esc(p.title)}</a>` : esc(p.title)}</h2><p class="date">posted ${esc(niceDate(p.date))}</p>${fmt(p.body)}</article>`;
+
+function renderHome() {
+  document.title = site.settings.title;
+  const posts = [...site.posts].sort(byDate).map(p => postHtml(p, true)).join('') || '<div class="box">no posts yet!</div>';
+  mount(shell(`<div class="posts">${posts}</div>`, sidebar()));
+}
+function renderPost(id) {
+  const p = site.posts.find(p => p.id === id);
+  if (!p) return mount(shell('<div class="box center"><h2>oops!</h2><p>that post got lost.</p><a class="btn" href="#/">go home</a></div>'));
+  document.title = p.title + ' - ' + site.settings.title;
+  mount(shell(postHtml(p, false) + '<p><a class="btn" href="#/">back</a></p>', sidebar()));
+}
+function renderMusic() {
+  document.title = site.settings.musicTitle + ' - ' + site.settings.title;
+  const g = site.albums.map(a => `<a class="alb" href="#/music/${esc(a.id)}"><img src="${esc(a.cover || PH)}" alt=""><b>${esc(a.title)}</b><small>${esc(a.artist || '')}${a.artist ? ' - ' : ''}${a.tracks.length} track${a.tracks.length === 1 ? '' : 's'}</small></a>`).join('');
+  mount(shell(`<div class="box" style="padding-top:26px"><h2 class="ttl">${esc(site.settings.musicTitle)}</h2>${g ? `<div class="grid">${g}</div>` : '<p>no albums yet!</p>'}</div>`));
+}
+function renderAlbum(id) {
+  const a = alb(id);
+  if (!a) return mount(shell('<div class="box center"><h2>oops!</h2><p>that album got lost.</p><a class="btn" href="#/music">back to music</a></div>'));
+  document.title = a.title + ' - ' + site.settings.title;
+  const tl = a.tracks.map((t, i) => `<li><button class="tbtn" data-play="${a.id}|${i}">${esc(t.title)}</button></li>`).join('');
+  mount(shell(`<div class="box"><div class="albhead"><img src="${esc(a.cover || PH)}" alt="">
+<div><h2 style="margin-bottom:4px">${esc(a.title)}</h2><div>${esc(a.artist || '')}</div>
+<div class="row">${a.tracks.length ? `<button class="btn pink" data-play="${a.id}|0">play all</button>` : ''}<a class="btn" href="#/music">all albums</a></div></div></div>
+${tl ? `<ol class="tl">${tl}</ol>` : '<p>no tracks yet!</p>'}</div>`));
+}
+function renderPhotos() {
+  document.title = site.settings.photosTitle + ' - ' + site.settings.title;
+  const g = photoList().map((p, i) => `<figure style="margin:0"><button class="pic" data-lb="${i}" aria-label="open photo"><img src="${esc(p.file)}" alt="${esc(p.caption)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:15px;display:block"></button>${p.caption ? `<figcaption class="center"><small>${esc(p.caption)}</small></figcaption>` : ''}</figure>`).join('');
+  mount(shell(`<div class="box" style="padding-top:26px"><h2 class="ttl">${esc(site.settings.photosTitle)}</h2>${g ? `<div class="grid">${g}</div>` : '<p>no photos yet!</p>'}</div>`));
+}
+function openLb(i) {
+  const p = photoList()[i]; if (!p) return;
+  $('#lbi').src = p.file; $('#lbi').alt = p.caption || ''; $('#lbc').textContent = p.caption || ''; $('#lb').hidden = false;
+}
+
+/* ---------- player ---------- */
+function playAlbum(id, i) {
+  const a = alb(id); if (!a || !a.tracks.length) return;
+  Q.a = a; Q.i = ((i % a.tracks.length) + a.tracks.length) % a.tracks.length;
+  aud.src = a.tracks[Q.i].file; aud.play().catch(() => {}); refreshPlayer();
+}
+function stopMusic() { aud.pause(); aud.removeAttribute('src'); Q = { a: null, i: -1 }; $('#pbar').hidden = true; document.body.classList.remove('hasbar'); }
+function refreshPlayer() {
+  const t = Q.a && Q.a.tracks[Q.i];
+  if (t) {
+    $('#pbar').hidden = false; document.body.classList.add('hasbar');
+    $('#ptitle').textContent = t.title; $('#palb').textContent = Q.a.title + (Q.a.artist ? ' - ' + Q.a.artist : '');
+    $('#pcov').src = Q.a.cover || PH;
+  }
+  $('#pplay').textContent = aud.paused ? '▶' : '⏸';
+  document.querySelectorAll('.tbtn').forEach(b => { const [id, i] = b.dataset.play.split('|'); b.classList.toggle('on', !!Q.a && Q.a.id === id && +i === Q.i); });
+}
+aud.addEventListener('play', refreshPlayer);
+aud.addEventListener('pause', refreshPlayer);
+aud.addEventListener('ended', () => { if (Q.a && Q.i < Q.a.tracks.length - 1) playAlbum(Q.a.id, Q.i + 1); });
+aud.addEventListener('timeupdate', () => { if (aud.duration) $('#seek').value = aud.currentTime / aud.duration * 100; });
+$('#seek').addEventListener('input', e => { if (aud.duration) aud.currentTime = e.target.value / 100 * aud.duration; });
+
+/* ---------- crypto / login ---------- */
+async function pbk(pw, saltHex) {
+  return { k: await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveBits', 'deriveKey']), salt: hex2buf(saltHex) };
+}
+async function hashPw(pw) {
+  const { k, salt } = await pbk(pw, CFG.salt);
+  return buf2hex(await crypto.subtle.deriveBits({ name: 'PBKDF2', salt, iterations: CFG.iter, hash: 'SHA-256' }, k, 256));
+}
+async function aesKey(pw) {
+  const { k, salt } = await pbk(pw, CFG.saltK);
+  return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: CFG.iter, hash: 'SHA-256' }, k, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+}
+async function encrypt(key, text) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(text)));
+  const all = new Uint8Array(12 + ct.length); all.set(iv); all.set(ct, 12);
+  let x = ''; all.forEach(c => x += String.fromCharCode(c)); return btoa(x);
+}
+async function decrypt(key, b64) {
+  const all = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  return new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: all.slice(0, 12) }, key, all.slice(12)));
+}
+
+/* ---------- github api ---------- */
+const A = { state: 'login', tab: 'posts', key: null, token: '', repo: '', branch: 'main', editing: null, msg: null };
+async function gh(path, opts = {}) {
+  const r = await fetch(`https://api.github.com/repos/${A.repo}${path ? '/' + path : ''}`, {
+    ...opts,
+    headers: { Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + A.token, ...(opts.body ? { 'Content-Type': 'application/json' } : {}) }
+  });
+  if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.message || ('error ' + r.status)); }
+  return r.status === 204 ? null : r.json();
+}
+async function getFile(p) {
+  try { return await gh(`contents/${p}?ref=${A.branch}`); }
+  catch (e) { if (/not found/i.test(e.message)) return null; throw e; }
+}
+const putFile = (p, b64, msg, sha) => gh(`contents/${p}`, { method: 'PUT', body: JSON.stringify({ message: msg, content: b64, branch: A.branch, ...(sha ? { sha } : {}) }) });
+async function delFile(p, msg) {
+  if (!p || /^https?:/.test(p)) return;
+  const f = await getFile(p);
+  if (f) await gh(`contents/${p}`, { method: 'DELETE', body: JSON.stringify({ message: msg, sha: f.sha, branch: A.branch }) });
+}
+async function loadSite() {
+  const f = await getFile('data/site.json');
+  if (f) site = norm(JSON.parse(unb64s(f.content)));
+}
+async function saveSite(msg) {
+  const f = await getFile('data/site.json');
+  await putFile('data/site.json', b64s(JSON.stringify(site, null, 2)), msg, f && f.sha);
+}
+async function prep(file) {
+  if (!/^image\/(png|jpe?g|webp)$/.test(file.type)) return file;
+  try {
+    const bm = await createImageBitmap(file), m = Math.max(bm.width, bm.height);
+    if (m <= 1600) return file;
+    const s = 1600 / m, c = document.createElement('canvas');
+    c.width = Math.round(bm.width * s); c.height = Math.round(bm.height * s);
+    c.getContext('2d').drawImage(bm, 0, 0, c.width, c.height);
+    const png = file.type === 'image/png', type = png ? 'image/png' : 'image/jpeg';
+    const blob = await new Promise(r => c.toBlob(r, type, .88));
+    return new File([blob], file.name.replace(/\.\w+$/, '') + (png ? '.png' : '.jpg'), { type });
+  } catch (e) { return file; }
+}
+async function upload(dir, file) {
+  const path = `${dir}/${Date.now()}-${uid().slice(0, 3)}-${file.name.replace(/[^\w.\-]+/g, '_')}`;
+  await putFile(path, await fileB64(file), 'upload ' + file.name);
+  return path;
+}
+function guessRepo() {
+  const h = location.hostname;
+  if (!h.endsWith('.github.io')) return '';
+  const seg = location.pathname.split('/')[1];
+  return h.split('.')[0] + '/' + (seg && !seg.includes('.') ? seg : h);
+}
+
+/* ---------- admin views ---------- */
+const st = (t, err) => { const e = $('#st'); if (e) { e.className = 'msg' + (err ? ' err' : ''); e.textContent = t; e.hidden = false; } };
+const msgBox = () => A.msg ? `<div class="msg${A.msg.err ? ' err' : ''}" id="st">${esc(A.msg.t)}</div>` : '<div class="msg" id="st" hidden></div>';
+const flash = (t, err) => { A.msg = { t, err }; };
+const btn = (act, id, label, cls = '', sub = '') => `<button class="btn small ${cls}" data-act="${act}" data-id="${esc(id)}"${sub ? ` data-sub="${esc(sub)}"` : ''}>${label}</button>`;
+
+function tabPosts() {
+  const ed = site.posts.find(p => p.id === A.editing);
+  const rows = [...site.posts].sort(byDate).map(p => `<div class="item"><span><a href="#/post/${esc(p.id)}">${esc(p.title)}</a><br><small>${esc(niceDate(p.date))}</small></span><span>${btn('edit', p.id, 'edit', 'mint')} ${btn('delpost', p.id, 'delete', 'pink')}</span></div>`).join('');
+  return `<div class="box"><h2>${ed ? 'edit post' : 'new post'}</h2>
+<form data-form="post"><input type="hidden" name="id" value="${ed ? esc(ed.id) : ''}">
+<label for="pt">title</label><input type="text" id="pt" name="title" maxlength="150" value="${ed ? esc(ed.title) : ''}" required>
+<label for="pb">post <small>(blank line = new paragraph, **bold**, *italic*, links become clickable)</small></label>
+<textarea id="pb" name="body" required>${ed ? esc(ed.body) : ''}</textarea>
+<div class="row"><button class="btn pink" type="submit">${ed ? 'save changes' : 'publish'}</button>${ed ? '<button class="btn" type="button" data-act="cancel">cancel</button>' : ''}</div></form></div>
+<div class="box"><h2>your posts</h2>${rows || '<p>no posts yet, write one above!</p>'}</div>`;
+}
+function tabMusic() {
+  const al = site.albums.map(a => `<div class="box">
+<div class="arow"><img class="thumb" src="${esc(a.cover || PH)}" alt=""><div><b>${esc(a.title)}</b><br><small>${esc(a.artist || 'no artist')}</small></div></div>
+<div class="row">${btn('albrename', a.id, 'rename', 'mint')}${btn('albcover', a.id, 'change cover', 'lav')}${btn('albtracks', a.id, 'add tracks', 'mint')}${btn('albdel', a.id, 'delete album', 'pink')}</div>
+<div style="margin-top:10px">${a.tracks.map((t, i) => `<div class="item"><span>${i + 1}. ${esc(t.title)}</span><span>${btn('trup', a.id, '▲', '', t.id)} ${btn('trdown', a.id, '▼', '', t.id)} ${btn('trrename', a.id, 'rename', 'mint', t.id)} ${btn('trdel', a.id, 'delete', 'pink', t.id)}</span></div>`).join('') || '<p class="hint">no tracks yet, press add tracks</p>'}</div></div>`).join('');
+  return `<div class="box"><h2>new album</h2><form data-form="album">
+<label for="at">album name</label><input type="text" id="at" name="title" maxlength="120" required>
+<label for="aa">artist <small>(optional)</small></label><input type="text" id="aa" name="artist" maxlength="120">
+<label for="ac">cover image <small>(optional, you can add one later)</small></label><input type="file" id="ac" name="cover" accept="image/*">
+<div class="row"><button class="btn pink" type="submit">create album</button></div></form></div>${al}`;
+}
+function tabPhotos() {
+  const g = photoList().map(p => `<div class="center"><img class="pic" style="cursor:default" src="${esc(p.file)}" alt="${esc(p.caption)}" loading="lazy"><small>${esc(p.caption || 'no caption')}</small><div class="row" style="justify-content:center;margin-top:6px">${btn('phcap', p.id, 'caption', 'mint')}${btn('phdel', p.id, 'delete', 'pink')}</div></div>`).join('');
+  return `<div class="box"><h2>photos</h2><p class="hint">every photo you upload here shows up on the photos page. big photos are shrunk automatically.</p>
+<div class="row"><button class="btn pink" data-act="phadd">upload photos</button></div></div>
+${g ? `<div class="box"><div class="grid">${g}</div></div>` : ''}`;
+}
+function tabSettings() {
+  const s = site.settings;
+  const tf = (k, l) => `<label for="s_${k}">${l}</label><input type="text" id="s_${k}" name="${k}" value="${esc(s[k])}">`;
+  const cf = (k, l) => `<div><label for="s_${k}">${l}</label><input type="color" id="s_${k}" name="${k}" value="${esc(s[k])}"></div>`;
+  const img = (key, id, label, w) => `<div class="arow" style="margin-top:10px">${s[key] ? `<img class="thumb wide" src="${esc(s[key])}" alt="">` : `<span style="width:64px;display:block">${BUNNY(56)}</span>`}<div><b>${label}</b><div class="row" style="margin-top:6px">${btn('setimg', id, 'upload new', 'pink')}${s[key] ? btn('resetimg', id, 'back to bunny', '') : ''}</div></div></div>`;
+  return `<div class="box"><h2>images</h2>${img('headerImage', 'hdr', 'top banner picture')}${img('sideImage', 'side', 'about box picture')}</div>
+<div class="box"><h2>text and colors</h2><form data-form="settings">
+${tf('title', 'site name')}${tf('tagline', 'tagline under the name')}${tf('aboutTitle', 'about box heading')}
+<label for="ab">about me text</label><textarea id="ab" name="about" style="min-height:110px">${esc(site.about)}</textarea>
+${tf('recentTitle', 'recent posts heading')}${tf('musicTitle', 'music page name')}${tf('photosTitle', 'photos page name')}${tf('footer', 'footer line 1')}${tf('footer2', 'footer line 2')}
+<div class="colors">${cf('bg', 'background')}${cf('accent', 'accent')}${cf('card', 'boxes')}${cf('ink', 'text and outlines')}</div>
+<div class="row"><button class="btn pink" type="submit">save</button><button class="btn" type="button" data-act="resetcolors">reset colors</button></div></form></div>
+<div class="box"><h2>github connection</h2><p class="hint">connected to ${esc(A.repo)}.</p><div class="row">${btn('reset', 'x', 'change github token', 'lav')}</div></div>`;
+}
+function adminHtml() {
+  if (A.state === 'login') return `<div class="box login"><h2>admin login</h2>${msgBox()}
+<form data-form="login" autocomplete="on">
+<label for="u">username</label><input type="text" id="u" name="u" autocomplete="username" required>
+<label for="p">password</label><input type="password" id="p" name="p" autocomplete="current-password" required>
+<div class="row"><button class="btn pink" type="submit">log in</button></div></form></div>`;
+  if (A.state === 'setup') return `<div class="box login"><h2>connect github</h2>${msgBox()}
+<p class="hint">one-time setup so this page can save to your repo. make a fine-grained token at github.com/settings/personal-access-tokens/new, limited to this repo, with Contents: read and write. it's stored encrypted with your admin password.</p>
+<form data-form="setup">
+<label for="r">repo <small>(owner/name)</small></label><input type="text" id="r" name="r" value="${esc(guessRepo())}" required>
+<label for="t">token</label><input type="password" id="t" name="t" autocomplete="off" required>
+<div class="row"><button class="btn pink" type="submit">connect</button></div></form></div>`;
+  const tabs = ['posts', 'music', 'photos', 'settings'].map(t => btn('tab', t, t, A.tab === t ? 'pink' : '')).join(' ');
+  const body = { posts: tabPosts, music: tabMusic, photos: tabPhotos, settings: tabSettings }[A.tab]();
+  return `<div class="stack">${msgBox()}<div class="row" style="margin:0 0 18px">${tabs}<span style="flex:1"></span>${btn('logout', 'x', 'log out')}</div>${body}</div>`;
+}
+function renderAdmin() {
+  document.title = 'admin - ' + site.settings.title;
+  mount(shell(adminHtml(), '', 'admin mode'));
+  A.msg = null;
+}
+async function enterDash() {
+  st('loading...');
+  try { await loadSite(); A.state = 'dash'; A.tab = 'posts'; A.editing = null; flash('connected!'); }
+  catch (e) { flash('could not load from github: ' + e.message, true); }
+  renderAdmin();
+}
+async function run(label, fn, okMsg) {
+  st(label);
+  try { await fn(); flash(okMsg || 'saved! it goes live in about a minute.'); }
+  catch (e) { flash('failed: ' + e.message, true); try { await saveSite('sync'); } catch (_) {} }
+  renderAdmin();
+}
+
+/* ---------- forms ---------- */
+const forms = {
+  async login(f) {
+    const d = new FormData(f), u = d.get('u'), p = d.get('p');
+    st('checking...');
+    if (!(u === CFG.user && (await hashPw(p)) === CFG.hash)) { await new Promise(r => setTimeout(r, 1000)); flash('wrong username or password.', true); return renderAdmin(); }
+    A.key = await aesKey(p);
+    const ct = localStorage.getItem('blog_ct');
+    if (ct) {
+      try {
+        A.token = await decrypt(A.key, ct);
+        A.repo = localStorage.getItem('blog_repo') || guessRepo();
+        A.branch = localStorage.getItem('blog_branch') || 'main';
+        return enterDash();
+      } catch (e) { localStorage.removeItem('blog_ct'); }
+    }
+    A.state = 'setup'; renderAdmin();
+  },
+  async setup(f) {
+    const d = new FormData(f);
+    A.repo = d.get('r').trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, '');
+    A.token = d.get('t').trim();
+    st('checking token...');
+    try {
+      const r = await gh('');
+      if (r.permissions && !r.permissions.push) throw new Error('token needs Contents: read and write on this repo');
+      A.branch = r.default_branch;
+      localStorage.setItem('blog_ct', await encrypt(A.key, A.token));
+      localStorage.setItem('blog_repo', A.repo);
+      localStorage.setItem('blog_branch', A.branch);
+      enterDash();
+    } catch (e) { flash(e.message, true); renderAdmin(); }
+  },
+  post(f) {
+    const d = new FormData(f), id = d.get('id'), title = d.get('title').trim(), body = d.get('body').trim();
+    if (!title || !body) return;
+    run('publishing...', async () => {
+      const p = site.posts.find(p => p.id === id);
+      if (p) { p.title = title; p.body = body; } else site.posts.push({ id: uid(), title, body, date: new Date().toISOString() });
+      await saveSite(p ? 'edit post' : 'new post'); A.editing = null;
+    });
+  },
+  album(f) {
+    const d = new FormData(f), title = d.get('title').trim(), artist = d.get('artist').trim(), cover = d.get('cover');
+    if (!title) return;
+    run('creating album...', async () => {
+      const a = { id: uid(), title, artist, cover: '', tracks: [] };
+      if (cover && cover.size) a.cover = await upload('covers', await prep(cover));
+      site.albums.push(a); await saveSite('new album');
+    }, 'album created! now press add tracks.');
+  },
+  settings(f) {
+    const d = new FormData(f);
+    run('saving...', async () => {
+      for (const k of ['title', 'tagline', 'aboutTitle', 'recentTitle', 'musicTitle', 'photosTitle', 'footer', 'footer2', 'bg', 'accent', 'card', 'ink']) site.settings[k] = d.get(k).trim() || DS[k];
+      site.about = d.get('about').trim();
+      await saveSite('update settings');
+    });
+  }
+};
+document.addEventListener('submit', e => {
+  const f = e.target.closest('form[data-form]'); if (!f) return;
+  e.preventDefault(); forms[f.dataset.form](f);
+});
+
+/* ---------- file picker ---------- */
+let PEND = null;
+const pick = $('#pick');
+function pickFor(type, id) {
+  PEND = { type, id };
+  pick.accept = type === 'tracks' ? 'audio/*' : 'image/*';
+  pick.multiple = type === 'tracks' || type === 'photos';
+  pick.click();
+}
+pick.addEventListener('change', () => {
+  const files = [...pick.files], p = PEND; pick.value = ''; PEND = null;
+  if (!p || !files.length) return;
+  run('uploading...', async () => {
+    if (p.type === 'cover') {
+      const a = alb(p.id), old = a.cover; a.cover = await upload('covers', await prep(files[0]));
+      await saveSite('album cover'); await delFile(old, 'remove old cover').catch(() => {});
+    } else if (p.type === 'tracks') {
+      const a = alb(p.id);
+      for (const f of files) {
+        if (f.size > 50 * 1024 * 1024) throw new Error(f.name + ' is over 50 MB');
+        st('uploading ' + f.name + '...');
+        a.tracks.push({ id: uid(), title: f.name.replace(/\.[^.]+$/, ''), file: await upload('music', f) });
+      }
+      await saveSite('add tracks'); stopMusic();
+    } else if (p.type === 'photos') {
+      for (const f of files) { st('uploading ' + f.name + '...'); site.photos.push({ id: uid(), file: await upload('images', await prep(f)), caption: '' }); }
+      await saveSite('add photos');
+    } else {
+      const key = p.type === 'hdr' ? 'headerImage' : 'sideImage', old = site.settings[key];
+      site.settings[key] = await upload('branding', await prep(files[0]));
+      await saveSite('update ' + key); await delFile(old, 'remove old image').catch(() => {});
+    }
+  });
+});
+
+/* ---------- clicks ---------- */
+async function adminClick(b) {
+  const act = b.dataset.act, id = b.dataset.id, sub = b.dataset.sub;
+  const a = alb(id), t = a && a.tracks.find(t => t.id === sub);
+  if (act === 'tab') { A.tab = id; A.editing = null; renderAdmin(); }
+  else if (act === 'edit') { A.editing = id; renderAdmin(); scrollTo(0, 0); }
+  else if (act === 'cancel') { A.editing = null; renderAdmin(); }
+  else if (act === 'logout') { A.state = 'login'; A.key = null; A.token = ''; renderAdmin(); }
+  else if (act === 'reset') { localStorage.removeItem('blog_ct'); A.state = 'setup'; renderAdmin(); }
+  else if (act === 'delpost') { if (confirm('delete this post?')) run('deleting...', async () => { site.posts = site.posts.filter(p => p.id !== id); await saveSite('delete post'); }, 'post deleted'); }
+  else if (act === 'albcover') pickFor('cover', id);
+  else if (act === 'albtracks') pickFor('tracks', id);
+  else if (act === 'phadd') pickFor('photos');
+  else if (act === 'setimg') pickFor(id);
+  else if (act === 'resetimg') run('saving...', async () => { const k = id === 'hdr' ? 'headerImage' : 'sideImage', old = site.settings[k]; site.settings[k] = ''; await saveSite('reset image'); await delFile(old, 'remove old image').catch(() => {}); });
+  else if (act === 'resetcolors') run('saving...', async () => { for (const k of ['bg', 'accent', 'card', 'ink']) site.settings[k] = DS[k]; await saveSite('reset colors'); });
+  else if (act === 'albrename') {
+    const n = prompt('album name', a.title); if (n === null) return;
+    const ar = prompt('artist', a.artist || ''); if (ar === null) return;
+    run('saving...', async () => { a.title = n.trim() || a.title; a.artist = ar.trim(); await saveSite('rename album'); });
+  } else if (act === 'albdel') {
+    if (confirm('delete "' + a.title + '" and all its tracks?')) run('deleting...', async () => {
+      site.albums = site.albums.filter(x => x.id !== id); await saveSite('delete album'); stopMusic();
+      for (const f of [a.cover, ...a.tracks.map(t => t.file)]) await delFile(f, 'delete file').catch(() => {});
+    }, 'album deleted');
+  } else if (act === 'trrename') {
+    const n = prompt('track name', t.title); if (n === null) return;
+    run('saving...', async () => { t.title = n.trim() || t.title; await saveSite('rename track'); });
+  } else if (act === 'trdel') {
+    if (confirm('delete "' + t.title + '"?')) run('deleting...', async () => { a.tracks = a.tracks.filter(x => x.id !== sub); await saveSite('delete track'); stopMusic(); await delFile(t.file, 'delete track file').catch(() => {}); }, 'track deleted');
+  } else if (act === 'trup' || act === 'trdown') {
+    const i = a.tracks.indexOf(t), j = act === 'trup' ? i - 1 : i + 1;
+    if (j < 0 || j >= a.tracks.length) return;
+    run('saving...', async () => { [a.tracks[i], a.tracks[j]] = [a.tracks[j], a.tracks[i]]; await saveSite('reorder tracks'); stopMusic(); }, 'moved');
+  } else if (act === 'phcap') {
+    const p = site.photos.find(p => p.id === id), n = prompt('caption', p.caption || ''); if (n === null) return;
+    run('saving...', async () => { p.caption = n.trim(); await saveSite('photo caption'); });
+  } else if (act === 'phdel') {
+    const p = site.photos.find(p => p.id === id);
+    if (confirm('delete this photo?')) run('deleting...', async () => { site.photos = site.photos.filter(x => x.id !== id); await saveSite('delete photo'); await delFile(p.file, 'delete photo file').catch(() => {}); }, 'photo deleted');
+  }
+}
+document.addEventListener('click', e => {
+  if (e.target.closest('#lb')) { $('#lb').hidden = true; return; }
+  const b = e.target.closest('[data-a],[data-play],[data-lb],[data-act]'); if (!b) return;
+  const d = b.dataset;
+  if (d.act) return adminClick(b);
+  if (d.play) { const [id, i] = d.play.split('|'); return playAlbum(id, +i); }
+  if (d.lb !== undefined) return openLb(+d.lb);
+  if (d.a === 'close') return stopMusic();
+  if (!Q.a) return;
+  if (d.a === 'play') aud.paused ? aud.play() : aud.pause();
+  else if (d.a === 'prev') playAlbum(Q.a.id, Q.i - 1);
+  else if (d.a === 'next') playAlbum(Q.a.id, Q.i + 1);
+});
+addEventListener('keydown', e => { if (e.key === 'Escape') $('#lb').hidden = true; });
+
+/* ---------- router ---------- */
+function route() {
+  const h = location.hash || '#/';
+  if (h.startsWith('#/admin')) renderAdmin();
+  else if (h.startsWith('#/post/')) renderPost(decodeURIComponent(h.slice(7)));
+  else if (h.startsWith('#/music/')) renderAlbum(decodeURIComponent(h.slice(8)));
+  else if (h === '#/music') renderMusic();
+  else if (h === '#/photos') renderPhotos();
+  else renderHome();
+  if (!h.startsWith('#/admin')) scrollTo(0, 0);
+}
+addEventListener('hashchange', route);
+fetch('data/site.json', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).catch(() => null).then(j => {
+  if (j) site = norm(j);
+  route();
+});
+})();
+</script>
+</body>
+</html>
