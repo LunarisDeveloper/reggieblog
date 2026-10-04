@@ -193,7 +193,88 @@
       "title": "Watch The Throne",
       "artist": "JaŸ Z, Kanye West",
       "cover": "covers/1791153273270-5yz-watchthrone2.jpg",
-      "tracks": []
+      "tracks": [
+        {
+          "id": "tuogv43e",
+          "title": "No Church In The Wild",
+          "file": "music/1791153521588-0-01_-_No_Church_In_The_Wild.flac"
+        },
+        {
+          "id": "9lhgewyo",
+          "title": "Lift Off",
+          "file": "music/1791153521588-1-02_-_Lift_Off.flac"
+        },
+        {
+          "id": "2agd31d8",
+          "title": "Ni__as In Paris",
+          "file": "music/1791153521588-2-03_-_Ni__as_In_Paris.flac"
+        },
+        {
+          "id": "vjboqldr",
+          "title": "Otis",
+          "file": "music/1791153521588-3-04_-_Otis.flac"
+        },
+        {
+          "id": "0csyn173",
+          "title": "Gotta Have It",
+          "file": "music/1791153521588-4-05_-_Gotta_Have_It.flac"
+        },
+        {
+          "id": "2yz952uz",
+          "title": "New Day",
+          "file": "music/1791153521588-5-06_-_New_Day.flac"
+        },
+        {
+          "id": "7rsakxul",
+          "title": "That's My Bitch",
+          "file": "music/1791153521588-6-07_-_That_s_My_Bitch.flac"
+        },
+        {
+          "id": "8agbm6iy",
+          "title": "Welcome To The Jungle",
+          "file": "music/1791153521588-7-08_-_Welcome_To_The_Jungle.flac"
+        },
+        {
+          "id": "fh1zimx6",
+          "title": "Who Gon Stop Me",
+          "file": "music/1791153521588-8-09_-_Who_Gon_Stop_Me.flac"
+        },
+        {
+          "id": "x5demujc",
+          "title": "Murder To Excellence",
+          "file": "music/1791153521588-9-10_-_Murder_To_Excellence.flac"
+        },
+        {
+          "id": "r0eohmy1",
+          "title": "Made In America",
+          "file": "music/1791153521588-10-11_-_Made_In_America.flac"
+        },
+        {
+          "id": "344c5mjb",
+          "title": "Why I Love You",
+          "file": "music/1791153521588-11-12_-_Why_I_Love_You.flac"
+        },
+        {
+          "id": "sw856v76",
+          "title": "Illest Motherf_____ Alive",
+          "file": "music/1791153521588-12-13_-_Illest_Motherf______Alive.flac"
+        },
+        {
+          "id": "4d48dj0l",
+          "title": "H•A•M",
+          "file": "music/1791153521588-13-14_-_H_A_M.flac"
+        },
+        {
+          "id": "i6sz5woo",
+          "title": "Primetime",
+          "file": "music/1791153521588-14-15_-_Primetime.flac"
+        },
+        {
+          "id": "tl7nvmps",
+          "title": "The Joy",
+          "file": "music/1791153521588-15-16_-_The_Joy.flac"
+        }
+      ]
     }
   ],
   "photos": [
