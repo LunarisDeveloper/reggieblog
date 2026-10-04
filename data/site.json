@@ -44,7 +44,13 @@
       "title": "Yandhi",
       "artist": "Kanye West",
       "cover": "covers/1791134637854-0rf-Yandhi_Cover_Art__Free_License_.jpg",
-      "tracks": []
+      "tracks": [
+        {
+          "id": "mlnkljlo",
+          "title": "01 - nathan - Chakras",
+          "file": "music/1791135179237-ftz-01_-_nathan_-_Chakras.mp3"
+        }
+      ]
     }
   ],
   "photos": [
