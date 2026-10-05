@@ -325,7 +325,68 @@
       "title": "808s and Heartbreak",
       "artist": "Kanye West",
       "cover": "covers/1791159324387-fm3-51-HCBAsFRL._SL1500_.jpg",
-      "tracks": []
+      "tracks": [
+        {
+          "id": "8ljicv22",
+          "title": "Amazing",
+          "file": "music/1791159334951-0-Amazing.mp3"
+        },
+        {
+          "id": "c9z62lrr",
+          "title": "Bad News",
+          "file": "music/1791159334951-1-Bad_News.mp3"
+        },
+        {
+          "id": "peuaav7t",
+          "title": "Coldest Winter",
+          "file": "music/1791159334951-2-Coldest_Winter.mp3"
+        },
+        {
+          "id": "h2v48m3b",
+          "title": "Heartless",
+          "file": "music/1791159334951-3-Heartless.mp3"
+        },
+        {
+          "id": "is6f2chz",
+          "title": "Love Lockdown",
+          "file": "music/1791159334951-4-Love_Lockdown.mp3"
+        },
+        {
+          "id": "s7e9zrc0",
+          "title": "Paranoid",
+          "file": "music/1791159334951-5-Paranoid.mp3"
+        },
+        {
+          "id": "dzjxc3yd",
+          "title": "Pinochio Story",
+          "file": "music/1791159334951-6-Pinochio_Story.mp3"
+        },
+        {
+          "id": "s4n6vac1",
+          "title": "Robocop",
+          "file": "music/1791159334951-7-Robocop.mp3"
+        },
+        {
+          "id": "tc41d2gr",
+          "title": "Say You Will",
+          "file": "music/1791159334951-8-Say_You_Will.mp3"
+        },
+        {
+          "id": "cpfqhzni",
+          "title": "See You in my Nightmares",
+          "file": "music/1791159334951-9-See_You_in_my_Nightmares.mp3"
+        },
+        {
+          "id": "4d06g3q0",
+          "title": "Streetlights",
+          "file": "music/1791159334951-10-Streetlights.mp3"
+        },
+        {
+          "id": "07owix01",
+          "title": "Welcome to Heartbreak",
+          "file": "music/1791159334951-11-Welcome_to_Heartbreak.mp3"
+        }
+      ]
     }
   ],
   "photos": [
